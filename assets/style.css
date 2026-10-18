@@ -1,4 +1,4 @@
-/* Prasanth Sasikumar · wearables that understand people.
+/* Praveen Sasikumar · HCI and psychology research.
    Black field, hairline panels, mono labels, one warm pulse colour. */
 
 :root{
@@ -201,6 +201,8 @@ a.artifact:hover{border-color:var(--act,var(--pulse));color:#fff;background:var(
 .builds .act-fig svg{max-width:380px}
 .builds .act-head h3{font-size:clamp(21px,1.8vw,26px)}
 .builds .act-line{font-size:15px}
+.builds>.act:last-child:nth-child(3n+1){grid-column:2}
+.builds>.act:nth-last-child(2):nth-child(3n+1){grid-column:2}
 .status{display:inline-flex;align-items:center;gap:7px}
 .status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--act)}
 
@@ -354,6 +356,17 @@ a.paper-title:hover{color:var(--pulse)}
 .footer-base nav{display:flex;align-items:center;gap:18px}
 .footer-base a:hover{color:var(--pulse)}
 .footer-base{display:flex;justify-content:space-between;gap:12px;padding-top:18px;padding-bottom:28px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-3)}
+.footer-motto{margin-top:30px;font-size:clamp(24px,4vw,42px);line-height:1.15;letter-spacing:-.035em;color:var(--fg-2)}
+.footer-base nav{display:flex;align-items:center;gap:18px}
+.experience-grid .act-info{min-height:145px}
+.education-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.paper-cluster{position:relative;padding:clamp(22px,2.8vw,34px);border:1px solid var(--line)}
+.paper-cluster::before{content:'';position:absolute;left:-1px;top:-1px;width:44px;height:2px;background:var(--pulse)}
+.paper-cluster h3{font-size:clamp(21px,1.9vw,26px);font-weight:450;letter-spacing:-.025em;line-height:1.2;margin-bottom:18px}
+.paper-cluster ul{border-top:1px solid var(--line)}
+.contact{margin-top:clamp(84px,10vw,136px);padding-top:30px;padding-bottom:30px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.contact-inner{display:flex;align-items:center;justify-content:space-between;gap:30px}
+.contact h2{margin-top:14px;font-size:clamp(28px,4vw,48px);line-height:1.1;letter-spacing:-.035em;font-weight:440}
 
 /* Reveals */
 .js [data-reveal]{opacity:0;transform:translateY(14px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--i,0) * 50ms)}
@@ -367,6 +380,7 @@ html[data-motion=off] [data-reveal]{opacity:1;transform:none}
   .nav-tabs a{min-width:0;gap:14px}
   .nav-right>a:not(.btn){display:none}
   .builds{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .builds>.act:last-child:nth-child(2n+1){grid-column:2}
 }
 @media (max-width:980px){
   .nav-tabs,.nav-right{display:none}
@@ -379,6 +393,7 @@ html[data-motion=off] [data-reveal]{opacity:1;transform:none}
   .acts,.paper-grid{grid-template-columns:1fr}
   .domains-inner{flex-direction:column;align-items:stretch;gap:6px;padding-top:12px;padding-bottom:12px}
   .org-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .education-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .repo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
   .footer-grid{grid-template-columns:1fr}
@@ -395,6 +410,9 @@ html[data-motion=off] [data-reveal]{opacity:1;transform:none}
   .section-head{grid-template-columns:1fr;align-items:start}
   .section-head .btn{justify-self:start}
   .builds,.repo-grid{grid-template-columns:1fr}
+  .builds>.act:last-child:nth-child(n){grid-column:auto}
+  .education-grid{grid-template-columns:1fr}
+  .contact-inner{align-items:flex-start;flex-direction:column}
   .act-fig{min-height:0;padding:18px 8px}
   .builds .act-fig{min-height:0}
   .act-head{padding:18px 18px 16px}

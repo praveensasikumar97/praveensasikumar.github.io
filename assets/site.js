@@ -164,9 +164,8 @@
     });
   }
 
-  /* Hero: a dot-matrix map of the route so far. Routes draw in order and carry
-     packets, wearables blink online and stream home to Singapore, the pointer
-     acts as a gaze reticle that lights the land, and a click adds you. */
+  /* Hero: a dot-matrix map of places and connections supplied in config.js.
+     The pointer acts as a gaze reticle that lights the land, and a click adds you. */
   const fx = document.querySelector('.hero-fx');
   const base = document.querySelector('.hero-base');
   const focus = document.querySelector('.map-focus');
