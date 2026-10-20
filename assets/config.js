@@ -5,6 +5,7 @@ window.SITE = {
     area: { lon0: -180, lon1: 180, lat0: 85, lat1: -60 },
     areaMobile: { lon0: -180, lon1: 180, lat0: 85, lat1: -60 },
     places: {
+      tvm: { name: 'Trivandrum · Kerala · India', note: '1997–2016', lat: 8.52, lon: 76.94, side: -1, dy: 24 },
       blr: { name: 'Bangalore', note: '2016', lat: 12.97, lon: 77.59, side: 1, dy: -14 },
       nz17: { name: 'New Zealand', note: '2017', lat: -41.0, lon: 174.0, side: -1, dy: -22 },
       guj: { name: 'Gujarat · India', note: '2019', lat: 22.8, lon: 72.6, side: -1, dy: 14 },
@@ -15,7 +16,7 @@ window.SITE = {
       fr: { name: 'France', note: '2026', lat: 46.6, lon: 2.2, side: -1, dy: 28 },
       auh: { name: 'Abu Dhabi', note: '2026', lat: 24.45, lon: 54.65, side: -1, dy: -15 },
     },
-    routes: [['blr', 'nz17'], ['nz17', 'guj'], ['guj', 'sg'], ['sg', 'anz'], ['anz', 'kr'], ['kr', 'es'], ['es', 'fr'], ['fr', 'auh']],
+    routes: [['tvm', 'blr'], ['blr', 'nz17'], ['nz17', 'guj'], ['guj', 'sg'], ['sg', 'anz'], ['anz', 'kr'], ['kr', 'es'], ['es', 'fr'], ['fr', 'auh']],
     trips: [],
   },
 };

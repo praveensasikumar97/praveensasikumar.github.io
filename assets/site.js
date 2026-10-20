@@ -388,10 +388,12 @@
         const [x, y] = project(pl.lon, pl.lat);
         if (pl.home) {
           const beat = still ? 0.4 : (t % 1700) / 1700;
-          ctx.strokeStyle = `rgba(${PULSE},${((1 - beat) * 0.8 * appear).toFixed(3)})`; ctx.lineWidth = 1.2;
+          const homeColor = getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff';
+          ctx.strokeStyle = homeColor; ctx.globalAlpha = (1 - beat) * 0.8 * appear; ctx.lineWidth = 1.6;
           ctx.beginPath(); ctx.arc(x, y, 5 + beat * 18, 0, Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = 1;
         }
-        ctx.fillStyle = `rgba(${PULSE},${appear})`; sq(x, y, 6);
+        ctx.fillStyle = pl.home ? getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff' : `rgba(${PULSE},${appear})`; sq(x, y, 6);
         ctx.fillStyle = '#000'; sq(x, y, 2);
         label(x, y, pl.name, pl.note, pl.side, pl.dy, appear);
       });
