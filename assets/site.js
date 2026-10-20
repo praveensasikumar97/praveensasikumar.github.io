@@ -270,7 +270,7 @@
       blips.push({ x, y, born: now, life: you ? 16000 : 4200 + Math.random() * 3000, you, phase: Math.random() });
       if (blips.length > 26) blips.splice(0, blips.length - 26);
     }
-    function label(x, y, name, note, side, dy, alpha) {
+    function label(x, y, name, note, side, dy, alpha, home = false) {
       ctx.font = '500 10.5px "Geist Mono", ui-monospace, monospace';
       ctx.textBaseline = 'middle';
       const text = name.toUpperCase(), extra = note ? ` · ${String(note).toUpperCase()}` : '';
@@ -278,8 +278,14 @@
       const spots = [[side, dy], [-side, dy], [side, -dy], [-side, -dy]].map(([sd, d]) => [sd > 0 ? x + 10 : x - 10 - bw, y + d]);
       const [lx, ly] = spots.find(([sx, sy]) => sx > 4 && sx + bw < width - 4 && !(avoid && sx - 4 < avoid.x1 && sx + bw + 4 > avoid.x0 && sy - 8 < avoid.y1 && sy + 8 > avoid.y0)) ?? spots[0];
       ctx.fillStyle = `rgba(0,0,0,${0.72 * alpha})`; ctx.fillRect(lx - 4, ly - 8, bw + 8, 16);
-      ctx.fillStyle = `rgba(255,255,255,${0.92 * alpha})`; ctx.fillText(text, lx, ly);
-      ctx.fillStyle = `rgba(${PULSE},${alpha})`; ctx.fillText(extra, lx + lw, ly);
+      if (home) {
+        const homeColor = getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff';
+        ctx.globalAlpha = 0.92 * alpha; ctx.fillStyle = homeColor; ctx.fillText(text, lx, ly);
+        ctx.globalAlpha = alpha; ctx.fillText(extra, lx + lw, ly); ctx.globalAlpha = 1;
+      } else {
+        ctx.fillStyle = `rgba(255,255,255,${0.92 * alpha})`; ctx.fillText(text, lx, ly);
+        ctx.fillStyle = `rgba(${PULSE},${alpha})`; ctx.fillText(extra, lx + lw, ly);
+      }
     }
 
     function draw(now) {
@@ -395,7 +401,7 @@
         }
         ctx.fillStyle = pl.home ? getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff' : `rgba(${PULSE},${appear})`; sq(x, y, 6);
         ctx.fillStyle = '#000'; sq(x, y, 2);
-        label(x, y, pl.name, pl.note, pl.side, pl.dy, appear);
+        label(x, y, pl.name, pl.note, pl.side, pl.dy, appear, !!pl.home);
       });
     }
 
