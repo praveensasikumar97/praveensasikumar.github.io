@@ -270,13 +270,12 @@
       blips.push({ x, y, born: now, life: you ? 16000 : 4200 + Math.random() * 3000, you, phase: Math.random() });
       if (blips.length > 26) blips.splice(0, blips.length - 26);
     }
-    function label(x, y, name, note, side, dy, alpha, home = false) {
+    function label(x, y, name, note, alpha, home = false, placement = null) {
       ctx.font = '500 10.5px "Geist Mono", ui-monospace, monospace';
       ctx.textBaseline = 'middle';
       const text = name.toUpperCase(), extra = note ? ` · ${String(note).toUpperCase()}` : '';
       const lw = ctx.measureText(text).width, bw = lw + ctx.measureText(extra).width;
-      const spots = [[side, dy], [-side, dy], [side, -dy], [-side, -dy]].map(([sd, d]) => [sd > 0 ? x + 10 : x - 10 - bw, y + d]);
-      const [lx, ly] = spots.find(([sx, sy]) => sx > 4 && sx + bw < width - 4 && !(avoid && sx - 4 < avoid.x1 && sx + bw + 4 > avoid.x0 && sy - 8 < avoid.y1 && sy + 8 > avoid.y0)) ?? spots[0];
+      const [lx, ly] = placement || [x + 10, y];
       ctx.fillStyle = `rgba(0,0,0,${0.72 * alpha})`; ctx.fillRect(lx - 4, ly - 8, bw + 8, 16);
       if (home) {
         const homeColor = getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff';
@@ -355,7 +354,7 @@
       if (gaze) for (const trip of trips) {
         if (Math.hypot(trip.xy[0] - gaze.x, trip.xy[1] - gaze.y) > 28) continue;
         ctx.fillStyle = '#fff'; sq(trip.xy[0], trip.xy[1], 5);
-        label(trip.xy[0], trip.xy[1], trip.name, trip.note, trip.side || 1, trip.dy || -14, 1);
+        label(trip.xy[0], trip.xy[1], trip.name, trip.note, 1);
         break;
       }
 
@@ -388,10 +387,41 @@
       });
 
       // Places lived, with labels kept clear of the headline copy.
-      Object.values(PLACES).forEach((pl, i) => {
+      const labelItems = Object.values(PLACES).map((pl, i) => {
         const appear = still ? 1 : Math.max(0, Math.min(1, (t - 300 - i * 700) / 500));
-        if (appear <= 0) return;
         const [x, y] = project(pl.lon, pl.lat);
+        return { pl, appear, x, y, i };
+      });
+      const occupied = [];
+      const priority = [...labelItems].sort((a, b) => Number(!!b.pl.home) - Number(!!a.pl.home) || b.pl.name.length - a.pl.name.length || a.i - b.i);
+      const placements = new Map();
+      for (const item of priority) {
+        const { pl, x, y } = item;
+        ctx.font = '500 10.5px "Geist Mono", ui-monospace, monospace';
+        const text = pl.name.toUpperCase(), extra = pl.note ? ` · ${String(pl.note).toUpperCase()}` : '';
+        const bw = ctx.measureText(text + extra).width;
+        const candidates = [];
+        for (const d of [16, 32, 48, 64, 80, 100]) {
+          candidates.push([x + 12, y - d], [x - 12 - bw, y - d], [x + 12, y + d], [x - 12 - bw, y + d]);
+        }
+        let chosen = null, bestScore = Infinity;
+        for (const [lx, ly] of candidates) {
+          const box = { x0: lx - 4, x1: lx + bw + 4, y0: ly - 8, y1: ly + 8 };
+          if (box.x0 < 4 || box.x1 > width - 4 || box.y0 < 4 || box.y1 > height - 4) continue;
+          if (avoid && box.x0 < avoid.x1 && box.x1 > avoid.x0 && box.y0 < avoid.y1 && box.y1 > avoid.y0) continue;
+          const labelHit = occupied.some(r => box.x0 < r.x1 + 8 && box.x1 + 8 > r.x0 && box.y0 < r.y1 + 5 && box.y1 + 5 > r.y0);
+          if (labelHit) continue;
+          const pinHits = labelItems.some(other => other !== item && Math.abs(other.x - (box.x0 + box.x1) / 2) < (box.x1 - box.x0) / 2 + 10 && Math.abs(other.y - (box.y0 + box.y1) / 2) < 18);
+          const score = Math.abs(ly - y) + (lx < x ? 2 : 0);
+          if (!pinHits && score < bestScore) { chosen = [lx, ly]; bestScore = score; }
+        }
+        if (!chosen) chosen = [Math.max(4, Math.min(width - bw - 8, x + 12)), Math.max(12, Math.min(height - 12, y - 18))];
+        placements.set(item, chosen);
+        occupied.push({ x0: chosen[0] - 4, x1: chosen[0] + bw + 4, y0: chosen[1] - 8, y1: chosen[1] + 8 });
+      }
+      labelItems.forEach(item => {
+        const { pl, appear, x, y } = item;
+        if (appear <= 0) return;
         if (pl.home) {
           const beat = still ? 0.4 : (t % 1700) / 1700;
           const homeColor = getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff';
@@ -401,7 +431,7 @@
         }
         ctx.fillStyle = pl.home ? getComputedStyle(document.documentElement).getPropertyValue('--home').trim() || '#6cd4ff' : `rgba(${PULSE},${appear})`; sq(x, y, 6);
         ctx.fillStyle = '#000'; sq(x, y, 2);
-        label(x, y, pl.name, pl.note, pl.side, pl.dy, appear, !!pl.home);
+        label(x, y, pl.name, pl.note, appear, !!pl.home, placements.get(item));
       });
     }
 
